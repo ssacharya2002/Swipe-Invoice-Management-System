@@ -131,12 +131,20 @@ function FileUpload() {
       setShowMissingDataModal(false);
 
       try {
-        const allMissingItems: MissingDataItem[] = [];
-
-        for (const file of acceptedFiles) {
+        setLoading(true);
+        
+        let allMissingItems: MissingDataItem[] = [];
+        
+        const filePromises = acceptedFiles.map(async (file) => {
           const data = await processFile(file);
-
-          // Process each item from the file
+          const fileResults: {
+            missingItems: MissingDataItem[],
+            validItems: {invoice: Invoice, product: Product[], customer: Customer}[]
+          } = {
+            missingItems: [],
+            validItems: []
+          };
+          
           data.data.forEach((item: any) => {
             const invoice: Invoice = {
               serialNumber: item.serialNumber,
@@ -147,9 +155,9 @@ function FileUpload() {
               totalAmount: item.totalAmount,
               date: item.date,
             };
-
+      
             const product: Product[] = item.products;
-
+      
             const customer: Customer = {
               name: item.customerName,
               phoneNumber: item.customerPhone,
@@ -157,11 +165,11 @@ function FileUpload() {
               email: item.customerEmail,
               address: item.address,
             };
-
+      
             // Check if data is missing
             if (checkMissingData(invoice, customer, product)) {
               // Add to missing data array
-              allMissingItems.push({
+              fileResults.missingItems.push({
                 serialNumber: item.serialNumber || "",
                 customerName: item.customerName || "",
                 quantity: item.quantity || 0,
@@ -172,23 +180,39 @@ function FileUpload() {
                 customer,
               });
             } else {
-              // Data is complete, add to store
-              dispatch(addInvoice(invoice));
-              dispatch(addProducts(product));
-              dispatch(addCustomer(customer));
+              // Data is complete, collect for dispatch
+              fileResults.validItems.push({ invoice, product, customer });
             }
           });
-        }
-
+          
+          return fileResults;
+        });
         
-        setLoading(false);
+        // Execute all file processing in parallel and wait for completion
+        const results = await Promise.all(filePromises);
+        
+        // Combine all results
+        results.forEach(result => {
+          // Add missing items
+          allMissingItems = [...allMissingItems, ...result.missingItems];
+          
+          // Dispatch all valid items to store
+          result.validItems.forEach(({ invoice, product, customer }) => {
+            dispatch(addInvoice(invoice));
+            dispatch(addProducts(product));
+            dispatch(addCustomer(customer));
+          });
+        });
+        
 
+        setLoading(false);
+      
         if (allMissingItems.length > 0) {
           // Set missing data and show modal
           setMissingDataItems(allMissingItems);
           setShowMissingDataModal(true);
         }
-
+      
         toast.success("Files processed successfully!");
       } catch (error) {
         setLoading(false);
