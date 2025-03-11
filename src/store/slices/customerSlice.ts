@@ -49,6 +49,7 @@ const customerSlice = createSlice({
           ...updatedData
         };
       }
+
     },
     
     updateCustomerPurchaseAmount: (state, action: PayloadAction<{
@@ -60,16 +61,10 @@ const customerSlice = createSlice({
       
       if (customer) {
         customer.totalPurchaseAmount += amount;
-        
-        // If total purchase amount is 0 or less, remove the customer
-        // if (customer.totalPurchaseAmount <= 0) {
-        //   return state.filter(c => c.name !== name);
-        // }
       }
     }
   }
 });
-
 
 export const { 
   addCustomer,

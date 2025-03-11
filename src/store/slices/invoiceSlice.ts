@@ -71,6 +71,7 @@ export const deleteInvoice = (serialNumber: string) => (dispatch: any, getState:
     
     // Remove the invoice
     dispatch(removeInvoice(serialNumber));
+    
   }
 };
 

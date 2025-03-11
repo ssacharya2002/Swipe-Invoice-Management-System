@@ -1,8 +1,7 @@
 import { deleteInvoice } from './slices/invoiceSlice';
-import { deleteProduct } from './slices/productSlice';
+import { deleteProduct, updateProductThunk } from './slices/productSlice';
 import { removeCustomer, updateCustomer } from './slices/customerSlice';
 import { updateInvoice } from './slices/invoiceSlice';
-import { updateProduct } from './slices/productSlice';
 import { AppDispatch } from './index';
 import { Invoice, Product, Customer } from '../types';
 import toast from 'react-hot-toast';
@@ -20,17 +19,17 @@ export const deleteItem = (
         if (!serialNumber) throw new Error('Serial number is required to delete an invoice');
         dispatch(deleteInvoice(serialNumber));
         break;
-        
+
       case 'products':
         if (!serialNumber || !name) throw new Error('Serial number and product name are required to delete a product');
         dispatch(deleteProduct(serialNumber, name));
         break;
-        
+
       case 'customers':
         if (!name) throw new Error('Customer name is required to delete a customer');
         dispatch(removeCustomer(name));
         break;
-        
+
       default:
         throw new Error(`Invalid type: ${type}`);
     }
@@ -55,28 +54,27 @@ export const updateItem = (
     switch (type) {
       case 'invoices':
         if (!serialNumber) throw new Error('Serial number is required to update an invoice');
-        dispatch(updateInvoice({ 
-          serialNumber, 
-          updatedData: updatedData as Partial<Invoice> 
+        dispatch(updateInvoice({
+          serialNumber,
+          updatedData: updatedData as Partial<Invoice>
         }));
         break;
-        
+
       case 'products':
         if (!serialNumber) throw new Error('Serial number is required to update a product');
-        dispatch(updateProduct({ 
+        dispatch(updateProductThunk(
           serialNumber, 
           name, 
-          updatedData: updatedData as Partial<Product> 
-        }));
-        break;
-        
+          updatedData as Partial<Product>
+        ));
+        break
       case 'customers':
-        dispatch(updateCustomer({ 
-          name, 
-          updatedData: updatedData as Partial<Customer> 
+        dispatch(updateCustomer({
+          name,
+          updatedData: updatedData as Partial<Customer>
         }));
         break;
-        
+
       default:
         throw new Error(`Invalid type: ${type}`);
     }
