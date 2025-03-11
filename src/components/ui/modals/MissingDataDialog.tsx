@@ -69,6 +69,11 @@ const MissingDataModal: React.FC<MissingDataModalProps> = ({
     }
   };
 
+  const handleSkip =()=>{
+    onComplete(editedData);
+    onClose();
+  }
+
   const handlePrevious = () => {
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
@@ -439,6 +444,9 @@ const MissingDataModal: React.FC<MissingDataModalProps> = ({
           </div>
 
           <div className="flex space-x-2">
+            <Button variant="outline" onClick={handleSkip}>
+              Skip all
+            </Button>
             <Button variant="outline" onClick={onClose}>
               Cancel
             </Button>
