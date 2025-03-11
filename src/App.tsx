@@ -9,7 +9,7 @@ function App() {
       <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto py-4 px-4">
           <h1 className="text-2xl font-bold text-gray-900">
-            Invoice Management System
+          Swipe Invoice Management System
           </h1>
         </div>
       </header>
