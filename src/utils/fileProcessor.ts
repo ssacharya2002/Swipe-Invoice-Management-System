@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI, Part } from "@google/generative-ai";
 import toast from "react-hot-toast";
-import * as XLSX from 'xlsx';
 import { prompt } from "./prompts";
+import { processExcel } from "./processExcel";
 
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
@@ -80,56 +80,5 @@ async function processPdfOrImage(file: File): Promise<any> {
         toast.error('Failed to process file');
     };
 }
-
-
-async function processExcel(file: File): Promise<any> {
-    
-    try {
-
-        const base64CSV = await convertExcelToBase64CSV(file);
-        const result = await model.generateContent([prompt, { inlineData: { data: base64CSV, mimeType: 'text/csv' } }]);
-
-        const response = result.response;
-        const text = response.text();
-
-        const jsonMatch = text.match(/\{[\s\S]*\}/);
-        if (!jsonMatch) {
-            throw new Error('No valid JSON found in the response');
-        }
-
-        const parsedData = JSON.parse(jsonMatch[0]);
-
-        return parsedData;
-    } catch (error) {
-        throw new Error('Failed to process Excel');
-    }
-
-}
-
-
-
-export const convertExcelToBase64CSV = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-
-        reader.onload = (e) => {
-            const data = new Uint8Array(e.target?.result as ArrayBuffer);
-            const workbook = XLSX.read(data, { type: 'array' });
-
-            const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-            const csv = XLSX.utils.sheet_to_csv(worksheet);
-
-            const base64CSV = btoa(unescape(encodeURIComponent(csv)));
-            resolve(base64CSV);
-        };
-
-        reader.onerror = (error) => reject(error);
-
-        reader.readAsArrayBuffer(file);
-    });
-};
-
-
-
 
 export { processFile };
