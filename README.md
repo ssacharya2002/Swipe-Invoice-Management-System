@@ -5,6 +5,12 @@
 
 Swipe is a React application that automates the extraction, processing, and management of invoice data from various file formats (Excel, PDF, and images). The application organizes extracted data into three main sections - Invoices, Products, and Customers - and maintains real-time synchronization across tabs using Redux for consistent updates.
 
+
+## 🚀 Live Demo
+
+Check out the live demo: [Swipe App](https://swipe-invoice-management-system.netlify.app/)
+
+
 ## ✨ Features
 
 - **AI-Powered Extraction**: Utilize Google Gemini API to intelligently extract data from multiple file formats
@@ -34,10 +40,6 @@ Swipe is a React application that automates the extraction, processing, and mana
 
 ### Customers Tab
 ![Customers Tab](./screenshots/CustomersTab.png)
-
-## 🚀 Live Demo
-
-Check out the live demo: [Swipe App](https://swipe-invoice-management-system.netlify.app/)
 
 ## 🧪 Test Cases
 
