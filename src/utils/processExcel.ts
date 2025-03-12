@@ -222,14 +222,18 @@ function transformDataWithMappings(rows: any[], mappings: Record<string, number>
     }));
 }
 
-function extractStringValue(row: any, colIndex: number | undefined): string {
-    if (colIndex === undefined || row[colIndex.toString()] === undefined) return '';
-    return String(row[colIndex.toString()]);
+function extractStringValue(row: any, colIndex: number | undefined | null): string {
+    if (colIndex === undefined || colIndex === null) return '';
+    const colKey = colIndex.toString();
+    if (row[colKey] === undefined) return '';
+    return String(row[colKey]);
 }
 
-function extractNumberValue(row: any, colIndex: number | undefined): number {
-    if (colIndex === undefined || row[colIndex.toString()] === undefined) return 0;
-    const val = parseFloat(row[colIndex.toString()]);
+function extractNumberValue(row: any, colIndex: number | undefined | null): number {
+    if (colIndex === undefined || colIndex === null) return 0;
+    const colKey = colIndex.toString();
+    if (row[colKey] === undefined) return 0;
+    const val = parseFloat(row[colKey]);
     return isNaN(val) ? 0 : val;
 }
 
